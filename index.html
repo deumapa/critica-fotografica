@@ -610,7 +610,7 @@ async function analyze() {
   const context = document.getElementById("context-input").value.trim();
 
   try {
-    const res = await fetch("/.netlify/functions/analyze", {
+    const res = await fetch("https://critica-foto.edeumapa.workers.dev", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
