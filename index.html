@@ -570,9 +570,23 @@ function loadFile(file) {
 
   document.getElementById("error-box").style.display = "none";
 
-  const reader = new FileReader();
-  reader.onload = (e) => { currentImageBase64 = e.target.result.split(",")[1]; };
-  reader.readAsDataURL(file);
+  // Compress image to avoid Safari request size limits
+  const canvas = document.createElement("canvas");
+  const imgEl = new Image();
+  imgEl.onload = function() {
+    const MAX = 1200;
+    let w = imgEl.width, h = imgEl.height;
+    if (w > MAX || h > MAX) {
+      if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+      else { w = Math.round(w * MAX / h); h = MAX; }
+    }
+    canvas.width = w; canvas.height = h;
+    canvas.getContext("2d").drawImage(imgEl, 0, 0, w, h);
+    const dataURL = canvas.toDataURL("image/jpeg", 0.85);
+    currentImageBase64 = dataURL.split(",")[1];
+    currentImageMime = "image/jpeg";
+  };
+  imgEl.src = currentImageURL;
 }
 
 function parseReport(text) {
